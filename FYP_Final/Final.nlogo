@@ -79,9 +79,9 @@ to setup-patches
 ;  foreach sort patches [ p ->
 ;    ask p [
 ;      set max-psugar file-read
-;      ;set max-pspice file-read
+;      set max-pspice file-read
 ;      set psugar max-psugar
-;      ;set pspice max-pspice
+;      set pspice max-pspice
 ;      recolor-patch
 ;    ]
 ;  ]
@@ -96,11 +96,11 @@ to setup-patches
 end
 
 to recolor-patch
-  set pcolor ( white - (( psugar + pspice) / 20 ) )
+  set pcolor ( red - (( psugar + pspice) / 2 ) )
 end
 
 to setup-enemies
-    if random-float 1 < 0.01 [ ;; 1% chance to be an enemy
+    if random-float 1 < 0.05 [ ;; 1% chance to be an enemy
       set is-enemy? true
       set shape "bug" ;; Mark enemies in red
     ]
@@ -117,19 +117,19 @@ to go
     make-decision-for-movement
     consume-and-collect
     check-death
-    update-label
+    ;update-label
     update-color        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     age-and-reproduce   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     trade               ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     pay-progressive-tax ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;interact-culture    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    interact-culture    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;engage-conflict     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;spread-disease      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;find-leader         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;assign-leaders      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;update-threat
-    ;update-fear
-    ;setup-enemies
+    update-threat
+    update-fear
+    setup-enemies
   ]
   ;redistribute-tax
   calculate-gini
@@ -142,9 +142,9 @@ to go
 end
 
 to make-decision-for-movement
-  update-fear
-  update-deliberation
-  update-social-fear
+  update-fear                 ;Neurocognitive (Affective) Module
+  update-deliberation         ;Deliberative Module
+  update-social-fear          ;Social Contagion of Fear Module
 
   if fear-level > deliberative-score [
     move-away-from-threat ;; If fear dominates, agent flees
@@ -156,7 +156,6 @@ to make-decision-for-movement
     move
   ]
 end
-
 to move
   let best-patch max-one-of patches in-radius vision [psugar + pspice]
 
@@ -173,7 +172,6 @@ to move
   ]
 
 end
-
 to move-away-from-threat
   ;; Identify patches in vision range with lower fear influence
   let safe-patch max-one-of patches in-radius vision [psugar + pspice]
@@ -182,7 +180,6 @@ to move-away-from-threat
     move-to safe-patch
   ]
 end
-
 to move-to-resource
   let best-resource-patch max-one-of patches in-radius vision [ psugar + pspice ]
 
@@ -191,7 +188,6 @@ to move-to-resource
   ]
 
 end
-
 to resolve-conflict
   let opponents other turtles-on patch-here  ;; Exclude self from opponents list
   if any? opponents [
@@ -227,7 +223,6 @@ to resolve-conflict
     ]
   ]
 end
-
 to consume-and-collect
   let p count turtles
   ;print ( p )
@@ -239,7 +234,6 @@ to consume-and-collect
   set spice max list (spice - spice-metabolism + max list pspice spice-metabolism) 0
   set pspice max list ( (pspice - spice-metabolism) / p ) 0  ;; Ensure pspice never goes negative
 end
-
 to check-death
   if sugar <= 0 or spice <= 0 [
     ;; Instead of dying immediately, reduce metabolism & weaken agent
@@ -258,11 +252,9 @@ to check-death
     ]
   ]
 end
-
 to update-label
   let int-sugar round sugar
   set label int-sugar
-  ;set color blue
 end
 
 to patch-growback
@@ -318,7 +310,6 @@ to update-population-plot
   set-current-plot "Population Over Time"
   set-current-plot-pen "Population"
 end
-
 to update-reproduction-plot
   set-current-plot "Reproduction Count"
   set-current-plot-pen "Reproduction"
@@ -956,7 +947,7 @@ fear-decay-rate
 fear-decay-rate
 0
 1
-1.0
+0.6
 0.1
 1
 NIL
