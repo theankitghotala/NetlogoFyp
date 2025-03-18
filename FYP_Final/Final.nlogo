@@ -54,8 +54,8 @@ to setup-turtles
     setxy random-xcor random-ycor
     set shape "person"
     set size 1.5
-    set sugar 50 + random 10
-    set spice 50 + random 10
+    set sugar 30 + random 10
+    set spice 30 + random 10
     set sugar-metabolism one-of[1 2 3]
     set spice-metabolism one-of[1 2 3]
     set vision one-of[1 2 3 4 5]
@@ -96,11 +96,11 @@ to setup-patches
 end
 
 to recolor-patch
-  set pcolor ( red - (( psugar + pspice) / 2 ) )
+  set pcolor ( white - (( psugar + pspice) / 2 ) )
 end
 
 to setup-enemies
-    if random-float 1 < 0.05 [ ;; 1% chance to be an enemy
+    if random-float 1 < 0.01 [ ;; 1% chance to be an enemy
       set is-enemy? true
       set shape "bug" ;; Mark enemies in red
     ]
@@ -122,16 +122,16 @@ to go
     age-and-reproduce   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     trade               ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     pay-progressive-tax ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    interact-culture    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;interact-culture    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;engage-conflict     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;spread-disease      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;find-leader         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;assign-leaders      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     update-threat
     update-fear
-    setup-enemies
+    ;setup-enemies
   ]
-  ;redistribute-tax
+  redistribute-tax
   calculate-gini
   update-population-plot
   update-reproduction-plot
@@ -275,11 +275,12 @@ to age-and-reproduce
   if age >= max-age [
     die
     set money-of-dead money-of-dead + sugar + spice
-    print ( word "Dead man contributed : " money-of-dead " amount of money. " )
+    set tax-pool tax-pool + money-of-dead
+    ;print ( word "Dead man contributed : " money-of-dead " amount of money. " )
   ]
 
   ;; Reproduction condition: only mature agents (age 15+) with enough resources can reproduce
-  if age >= reproduction-age and sugar >= 30 and spice >= 30 [
+  if age >= reproduction-age and sugar >= 50 and spice >= 50 [
 
     ;; Hatch a child with inherited traits and slight mutations
     hatch 1 [
@@ -902,7 +903,7 @@ max-sugar-level
 max-sugar-level
 0
 100
-50.0
+13.0
 1
 1
 NIL
@@ -917,7 +918,7 @@ max-spice-level
 max-spice-level
 0
 100
-50.0
+11.0
 1
 1
 NIL
@@ -932,7 +933,7 @@ Reproduction-age
 Reproduction-age
 0
 100
-18.0
+41.0
 1
 1
 NIL
@@ -947,7 +948,7 @@ fear-decay-rate
 fear-decay-rate
 0
 1
-0.6
+0.3
 0.1
 1
 NIL
